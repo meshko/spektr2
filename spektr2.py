@@ -44,18 +44,19 @@ class ResultsDialog(wx.Dialog):
         self.result_str = "\n".join(map(str, parent.results))
         self.result_str += "\n"
         self.result_str += 'Среднее: ' + str(sum(parent.results) / len(parent.results))
-        text_ctrl = wx.TextCtrl(self, size=(150,200), value=self.result_str, style=wx.TE_READONLY | wx.TE_CENTER | wx.TE_MULTILINE)
+        text_ctrl = wx.TextCtrl(self, size=(150, 200), value=self.result_str,
+                                style=wx.TE_READONLY | wx.TE_CENTER | wx.TE_MULTILINE)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-        cbButton = wx.Button(self, id=wx.ID_OK, label='Скопировать')
-        cbButton.Bind(wx.EVT_BUTTON, self.on_clipboard)
-        cbButton.SetDefault()
-        cancelButton = wx.Button(self, id=wx.ID_CANCEL, label='Закрыть')
-        clearButton = wx.Button(self, label="Очистить")
-        hbox2.Add(cbButton)
-        hbox2.Add(cancelButton, flag=wx.LEFT, border=5)
-        hbox2.Add(clearButton, flag=wx.LEFT, border=5)
-        clearButton.Bind(wx.EVT_BUTTON, self.on_clear)
+        cb_btn = wx.Button(self, id=wx.ID_OK, label='Скопировать')
+        cb_btn.Bind(wx.EVT_BUTTON, self.on_clipboard)
+        cb_btn.SetDefault()
+        cancel_btn = wx.Button(self, id=wx.ID_CANCEL, label='Закрыть')
+        clear_btn = wx.Button(self, label="Очистить")
+        hbox2.Add(cb_btn)
+        hbox2.Add(cancel_btn, flag=wx.LEFT, border=5)
+        hbox2.Add(clear_btn, flag=wx.LEFT, border=5)
+        clear_btn.Bind(wx.EVT_BUTTON, self.on_clear)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
         vbox.Add(text_ctrl, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
@@ -64,14 +65,14 @@ class ResultsDialog(wx.Dialog):
         self.SetSizer(vbox)
         self.Fit()
 
-    def on_clipboard(self, e):
+    def on_clipboard(self, _):
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(wx.TextDataObject(self.result_str))
             wx.TheClipboard.Close()
         self.Close()
 
-    def on_clear(self, e):
-        self.parent.results = []
+    def on_clear(self, _):
+        self.parent.clear_results()
         self.Close()
 
 
@@ -79,7 +80,7 @@ class SettingsDialog(wx.Dialog):
     def __init__(self, parent, *args, **kw):
         super(SettingsDialog, self).__init__(parent, *args, **kw)
         self.parent = parent
-        self.InitUI()
+        self.init_ui()
         # self.SetSize((250, 200))
         self.Fit()
         self.SetTitle("Настройки")
@@ -125,27 +126,34 @@ class SettingsDialog(wx.Dialog):
         self.parent.force_recalc()
         self.parent.Refresh()
 
-    def InitUI(self):
+    def init_ui(self):
         pnl = wx.Panel(self)
 
         sbs = wx.BoxSizer(wx.VERTICAL)
-        sbs.Add(self.create_color_picker(pnl, "Цвет фона", "Background", self.parent.settings.background_color), proportion=1, flag=wx.ALIGN_CENTER)
-        sbs.Add(self.create_color_picker(pnl, "Цвет прямоугольника", "Rectangle", self.parent.settings.rect_color), proportion=1, flag=wx.ALIGN_CENTER)
-        sbs.Add(self.create_color_picker(pnl, "Цвет линии", "Line", self.parent.settings.line_color), proportion=1, flag=wx.ALIGN_CENTER)
+        sbs.Add(self.create_color_picker(pnl, "Цвет фона", "Background", self.parent.settings.background_color),
+                proportion=1, flag=wx.ALIGN_CENTER)
+        sbs.Add(self.create_color_picker(pnl, "Цвет прямоугольника", "Rectangle", self.parent.settings.rect_color),
+                proportion=1, flag=wx.ALIGN_CENTER)
+        sbs.Add(self.create_color_picker(pnl, "Цвет линии", "Line", self.parent.settings.line_color),
+                proportion=1, flag=wx.ALIGN_CENTER)
 
-        sbs.Add(self.create_slider(pnl, "Толщина линии", "line_width", self.parent.settings.line_width, 1, 10), proportion=1, flag=wx.ALIGN_RIGHT)
-        sbs.Add(self.create_slider(pnl, "Угол линии", "line_angle", self.parent.settings.line_angle, 10, 80), proportion=1, flag=wx.ALIGN_RIGHT)
-        sbs.Add(self.create_slider(pnl, "Ширина прямоугольника", "rect_width", self.parent.settings.rect_width, 0, 50), proportion=1, flag=wx.ALIGN_RIGHT)
-        sbs.Add(self.create_slider(pnl, "Высота прямоугольника", "rect_height", self.parent.settings.rect_height, 0, 100), proportion=1, flag=wx.ALIGN_RIGHT)
+        sbs.Add(self.create_slider(pnl, "Толщина линии", "line_width", self.parent.settings.line_width, 1, 10),
+                proportion=1, flag=wx.ALIGN_RIGHT)
+        sbs.Add(self.create_slider(pnl, "Угол линии", "line_angle", self.parent.settings.line_angle, 10, 80),
+                proportion=1, flag=wx.ALIGN_RIGHT)
+        sbs.Add(self.create_slider(pnl, "Ширина прямоугольника", "rect_width", self.parent.settings.rect_width, 0, 50),
+                proportion=1, flag=wx.ALIGN_RIGHT)
+        sbs.Add(self.create_slider(pnl, "Высота прямоугольника", "rect_height",
+                                   self.parent.settings.rect_height, 0, 100), proportion=1, flag=wx.ALIGN_RIGHT)
 
         pnl.SetSizer(sbs)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-        okButton = wx.Button(self, id=wx.ID_OK, label='OK')
-        okButton.SetDefault()
-        cancelButton = wx.Button(self, id=wx.ID_CANCEL, label='Cancel')
-        hbox2.Add(okButton)
-        hbox2.Add(cancelButton, flag=wx.LEFT, border=5)
+        ok_btn = wx.Button(self, id=wx.ID_OK, label='OK')
+        ok_btn.SetDefault()
+        cancel_btn = wx.Button(self, id=wx.ID_CANCEL, label='Cancel')
+        hbox2.Add(ok_btn)
+        hbox2.Add(cancel_btn, flag=wx.LEFT, border=5)
 
         vbox = wx.BoxSizer(wx.VERTICAL)
         vbox.Add(pnl, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
@@ -164,14 +172,19 @@ class View(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
 
-        button = wx.Button(self, label="Настройки", pos=(10, 10), size=(120, 20))
-        button.Bind(wx.EVT_BUTTON, self.on_settings)
         button = wx.Button(self, label="Результаты", pos=(10, 40), size=(120, 20))
         button.Bind(wx.EVT_BUTTON, self.on_results)
-        button = wx.Button(self, label="Помощь", pos=(10, 70), size=(120, 20))
-        button.Bind(wx.EVT_BUTTON, self.on_help)
+        button = wx.Button(self, label="Настройки", pos=(10, 70), size=(120, 20))
+        button.Bind(wx.EVT_BUTTON, self.on_settings)
+        # button = wx.Button(self, label="Помощь", pos=(10, 70), size=(120, 20))
+        # button.Bind(wx.EVT_BUTTON, self.on_help)
         button = wx.Button(self, label="Выход", pos=(10, 100), size=(120, 20))
         button.Bind(wx.EVT_BUTTON, self.on_exit)
+
+        wx.StaticText(self, label="Клавиши ↑ и ↓ двигают линию вверх и вниз, ENTER запоминает результат тестирования",
+                      style=wx.ALIGN_CENTER_HORIZONTAL, pos=(10, 5))
+
+        self.results_lbl = wx.StaticText(self, label="0", pos=(140, 40))
 
         try:
             with open('spektr2.json', 'r') as config_file:
@@ -179,6 +192,11 @@ class View(wx.Panel):
         except Exception as ex:
             print(ex)
         self.line_pos = 0
+        self.SetFocusIgnoringChildren()
+
+    def clear_results(self):
+        self.results = []
+        self.results_lbl.SetLabelText("0")
 
     def on_size(self, event):
         event.Skip()
@@ -198,10 +216,10 @@ class View(wx.Panel):
         self.line_start_x = self.rect_x / 2
         self.line_x_len = (self.rect_x / 2)  # remove rect_width
         self.line_y_len = self.line_x_len * math.tan(math.radians(self.settings.line_angle))
+        self.line_y_target = (self.line_x_len + self.rect_width) * math.tan(math.radians(self.settings.line_angle))
         self.line2_start_x = self.line_start_x + self.rect_x / 2 + self.rect_width
 
-
-    def on_paint(self, event):
+    def on_paint(self, _):
         w, h = self.GetClientSize()
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetBackground(wx.Brush(self.settings.background_color))
@@ -220,22 +238,25 @@ class View(wx.Panel):
         keycode = event.GetKeyCode()
         _, h = self.GetClientSize()
         if keycode == wx.WXK_UP:
-            if self.line_pos < self.rect_height: self.line_pos += 1
-            self.Refresh()
+            if self.line_pos < self.rect_height:
+                self.line_pos += 1
+                self.Refresh()
         elif keycode == wx.WXK_DOWN:
-            if self.line_pos > 0: self.line_pos -= 1
-            self.Refresh()
+            if self.line_pos > 0:
+                self.line_pos -= 1
+                self.Refresh()
         elif keycode == wx.WXK_ESCAPE:
             sys.exit(0)
         elif keycode == wx.WXK_RETURN:
-            self.results += [int(self.line_y_len - self.line_pos)]
+            self.results += [int(self.line_y_target - self.line_pos)]
             self.line_pos = 0
+            self.results_lbl.SetLabelText(str(len(self.results)))
             self.Refresh()
 
-    def on_settings(self, event):
+    def on_settings(self, _):
         old_settings = copy(self.settings)
-        cdDialog = SettingsDialog(self)
-        if cdDialog.ShowModal() != wx.ID_OK:
+        settings_dlg = SettingsDialog(self)
+        if settings_dlg.ShowModal() != wx.ID_OK:
             self.settings = old_settings
             self.force_recalc()
             self.Refresh()
@@ -246,18 +267,21 @@ class View(wx.Panel):
                     config_file.write(json_str)
             except Exception as ex:
                 print(ex)
-        cdDialog.Destroy()
+        settings_dlg.Destroy()
+        self.SetFocusIgnoringChildren()
 
-    def on_results(self, event):
+    def on_results(self, _):
         if self.results:
             res = ResultsDialog(self)
             res.ShowModal()
             res.Destroy()
+            self.SetFocusIgnoringChildren()
 
-    def on_help(self, event):
+    def on_help(self, _):
         print("help")
 
-    def on_exit(self, event):
+    def on_exit(self, _):
+        self.Destroy()
         sys.exit(0)
 
 
