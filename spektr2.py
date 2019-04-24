@@ -43,7 +43,7 @@ class ResultsDialog(wx.Dialog):
         self.SetTitle("Результаты")
         self.result_str = "\n".join(map(str, parent.results))
         self.result_str += "\n"
-        self.result_str += 'Среднее: ' + str(sum(parent.results) / len(parent.results))
+        self.result_str += 'Среднее: %.2f' % (sum(parent.results) / len(parent.results))
         text_ctrl = wx.TextCtrl(self, size=(150, 200), value=self.result_str,
                                 style=wx.TE_READONLY | wx.TE_CENTER | wx.TE_MULTILINE)
 
@@ -164,7 +164,7 @@ class SettingsDialog(wx.Dialog):
 
 class View(wx.Panel):
     def __init__(self, parent, settings):
-        super(View, self).__init__(parent)
+        super(View, self).__init__(parent, style=wx.WANTS_CHARS)
         self.settings = settings
         self.results = []
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -236,6 +236,7 @@ class View(wx.Panel):
 
     def on_key_down(self, event):
         keycode = event.GetKeyCode()
+        #print(keycode)
         _, h = self.GetClientSize()
         if keycode == wx.WXK_UP:
             if self.line_pos < self.rect_height:
@@ -248,7 +249,7 @@ class View(wx.Panel):
         elif keycode == wx.WXK_ESCAPE:
             sys.exit(0)
         elif keycode == wx.WXK_RETURN:
-            self.results += [int(self.line_y_target - self.line_pos)]
+            self.results += [int(self.line_pos - self.line_y_target)]
             self.line_pos = 0
             self.results_lbl.SetLabelText(str(len(self.results)))
             self.Refresh()
