@@ -174,12 +174,15 @@ class View(wx.Panel):
 
         button = wx.Button(self, label="Результаты", pos=(10, 40), size=(120, 20))
         button.Bind(wx.EVT_BUTTON, self.on_results)
+        button.Bind(wx.EVT_SET_FOCUS, self.on_btn_focus)
         button = wx.Button(self, label="Настройки", pos=(10, 70), size=(120, 20))
         button.Bind(wx.EVT_BUTTON, self.on_settings)
+        button.Bind(wx.EVT_SET_FOCUS, self.on_btn_focus)
         # button = wx.Button(self, label="Помощь", pos=(10, 70), size=(120, 20))
         # button.Bind(wx.EVT_BUTTON, self.on_help)
         button = wx.Button(self, label="Выход", pos=(10, 100), size=(120, 20))
         button.Bind(wx.EVT_BUTTON, self.on_exit)
+        button.Bind(wx.EVT_SET_FOCUS, self.on_btn_focus)
 
         wx.StaticText(self, label="Клавиши ↑ и ↓ двигают линию вверх и вниз, ENTER запоминает результат тестирования",
                       style=wx.ALIGN_CENTER_HORIZONTAL, pos=(10, 5))
@@ -192,6 +195,9 @@ class View(wx.Panel):
         except Exception as ex:
             print(ex)
         self.line_pos = 0
+        self.SetFocusIgnoringChildren()
+
+    def on_btn_focus(self, _):
         self.SetFocusIgnoringChildren()
 
     def clear_results(self):
