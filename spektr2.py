@@ -173,15 +173,15 @@ class View(wx.Panel):
         self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
 
         button = wx.Button(self, label="Результаты", pos=(10, 40), size=(120, 20))
-        button.Bind(wx.EVT_BUTTON, self.on_results)
+        button.Bind(wx.EVT_LEFT_UP, self.on_results)
         button.Bind(wx.EVT_SET_FOCUS, self.on_btn_focus)
         button = wx.Button(self, label="Настройки", pos=(10, 70), size=(120, 20))
-        button.Bind(wx.EVT_BUTTON, self.on_settings)
+        button.Bind(wx.EVT_LEFT_UP, self.on_settings)
         button.Bind(wx.EVT_SET_FOCUS, self.on_btn_focus)
         # button = wx.Button(self, label="Помощь", pos=(10, 70), size=(120, 20))
         # button.Bind(wx.EVT_BUTTON, self.on_help)
         button = wx.Button(self, label="Выход", pos=(10, 100), size=(120, 20))
-        button.Bind(wx.EVT_BUTTON, self.on_exit)
+        button.Bind(wx.EVT_LEFT_UP, self.on_exit)
         button.Bind(wx.EVT_SET_FOCUS, self.on_btn_focus)
 
         wx.StaticText(self, label="Клавиши ↑ и ↓ двигают линию вверх и вниз, ENTER запоминает результат тестирования",
@@ -197,6 +197,7 @@ class View(wx.Panel):
         self.line_pos = 0
         self.SetFocusIgnoringChildren()
 
+    # steal focuse because Windows is weird.
     def on_btn_focus(self, _):
         self.SetFocusIgnoringChildren()
 
