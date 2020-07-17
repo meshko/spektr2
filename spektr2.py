@@ -105,7 +105,7 @@ class SettingsDialog(wx.Dialog):
 
     def create_slider(self, parent, text, name, val, min_val, max_val):
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(wx.StaticText(parent, label=text), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        hbox.Add(wx.StaticText(parent, label=text), flag=wx.ALIGN_CENTER_VERTICAL)
         slider = wx.Slider(parent, name=name, value=val, minValue=min_val, maxValue=max_val,
                            style=wx.SL_HORIZONTAL | wx.SL_VALUE_LABEL | wx.SL_LABELS)
         hbox.Add(slider)
